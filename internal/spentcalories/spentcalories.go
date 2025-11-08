@@ -35,7 +35,7 @@ func parseTraining(data string) (int, string, time.Duration, error) {
 	}
 
 	if numberOfSteps <= 0 {
-		return 0, "", 0, errors.New("количество шагов должно быть больше 0")
+		return 0, "", 0, errors.New("количество шагов меньше или равно 0")
 	}
 
 	//Продолжительность активности
@@ -43,6 +43,10 @@ func parseTraining(data string) (int, string, time.Duration, error) {
 
 	if err != nil {
 		return 0, "", 0, err
+	}
+
+	if durationOfTheActivity <= 0 {
+		return 0, "", 0, errors.New("время равно или меньше 0")
 	}
 
 	return numberOfSteps, str[1], durationOfTheActivity, nil
@@ -82,6 +86,14 @@ func TrainingInfo(data string, weight, height float64) (string, error) {
 		return "", err
 	}
 
+	if weight <= 0 {
+		return "", errors.New("отрицательный или нулевой вес")
+	}
+
+	if height <= 0 {
+		return "", errors.New("отрицательный или нулевой рост")
+	}
+
 	switch typeOfTraining {
 	case "Бег":
 		distance := distance(numberOfSteps, height)
@@ -93,7 +105,7 @@ func TrainingInfo(data string, weight, height float64) (string, error) {
 			return "", err
 		}
 
-		return fmt.Sprintf("Тип тренировки: %s\nДлительность: %.2v\nДистанция: %.2v\nСкорость: %.2v\nСожгли калорий: %.2v",
+		return fmt.Sprintf("Тип тренировки: %s\nДлительность: %.2f ч.\nДистанция: %.2f км.\nСкорость: %.2f км/ч\nСожгли калорий: %.2f\n",
 			typeOfTraining, float64(durationOfTheActivity.Hours()), distance, averageSpeed, RunningSpentCalories), nil
 
 	case "Ходьба":
@@ -106,7 +118,7 @@ func TrainingInfo(data string, weight, height float64) (string, error) {
 			return "", err
 		}
 
-		return fmt.Sprintf("Тип тренировки: %s\nДлительность: %.2v\nДистанция: %.2v\nСкорость: %.2v\nСожгли калорий: %.2v",
+		return fmt.Sprintf("Тип тренировки: %s\nДлительность: %.2f ч.\nДистанция: %.2f км.\nСкорость: %.2f км/ч\nСожгли калорий: %.2f\n",
 			typeOfTraining, float64(durationOfTheActivity.Hours()), distance, averageSpeed, WalkingSpentCalories), nil
 
 	default:
@@ -125,6 +137,15 @@ func RunningSpentCalories(steps int, weight, height float64, duration time.Durat
 	if duration <= 0 {
 		return 0, errors.New("продолжительность меньше или равна 0")
 	}
+
+	if weight <= 0 {
+		return 0, errors.New("отрицательный или нулевой вес")
+	}
+
+	if height <= 0 {
+		return 0, errors.New("отрицательный или нулевой рост")
+	}
+
 	// Средняя скорость
 	averageSpeed := meanSpeed(steps, height, duration)
 	// Продолжительность в минуах
@@ -144,6 +165,14 @@ func WalkingSpentCalories(steps int, weight, height float64, duration time.Durat
 
 	if duration <= 0 {
 		return 0, errors.New("продолжительность меньше или равна 0")
+	}
+
+	if weight <= 0 {
+		return 0, errors.New("отрицательный или нулевой вес")
+	}
+
+	if height <= 0 {
+		return 0, errors.New("отрицательный или нулевой рост")
 	}
 
 	// Средняя скорость
