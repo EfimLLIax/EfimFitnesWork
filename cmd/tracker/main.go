@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	weight := 84.6
+	weight := 84.6 // вес
 	height := 1.87
 
 	// дневная активность
