@@ -9,8 +9,8 @@ import (
 )
 
 func main() {
-	weight := 84.6
-	height := 1.87
+	weight := 84.6 // вес
+	height := 1.87 //рост
 
 	// дневная активность
 	input := []string{
