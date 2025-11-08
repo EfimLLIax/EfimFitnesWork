@@ -23,9 +23,9 @@ func parsePackage(data string) (int, time.Duration, error) {
 	str := strings.Split(data, ",")
 
 	if len(str) != 2 {
-		return 0, 0, errors.New("длина слайса не равна 2")
+		return 0, 0, errors.New("длина слайса не равна двум")
 	}
-	// Количество шагов
+
 	numberOfSteps, err := strconv.Atoi(str[0])
 
 	if err != nil {
@@ -33,18 +33,17 @@ func parsePackage(data string) (int, time.Duration, error) {
 	}
 
 	if numberOfSteps <= 0 {
-		return 0, 0, errors.New("количество шагов меньше или равно 0")
+		return 0, 0, errors.New("количество шагов меньше или равно нулю")
 	}
-	// Продолжительность прогулки
+
 	durationOfTheWalk, err := time.ParseDuration(str[1])
 
 	if err != nil {
 		return 0, 0, err
 	}
 
-	// Продллжительность меньше или равно 0
 	if durationOfTheWalk <= 0 {
-		return 0, 0, errors.New("время равно 0")
+		return 0, 0, errors.New("время равно нулю")
 	}
 
 	return numberOfSteps, durationOfTheWalk, nil
@@ -61,6 +60,8 @@ func DayActionInfo(data string, weight, height float64) string {
 	}
 
 	if numberOfSteps <= 0 {
+		err = errors.New("количество шагов меньше или равно нулю")
+		log.Println(err)
 		return ""
 	}
 	// Проиденая дистанция

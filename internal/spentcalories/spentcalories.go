@@ -19,15 +19,13 @@ const (
 )
 
 func parseTraining(data string) (int, string, time.Duration, error) {
-	// Разеление строки на слайсы
+
 	str := strings.Split(data, ",")
 
-	// Количество элементов
 	if len(str) != 3 {
-		return 0, "", 0, errors.New("длина слайса не равна 3")
+		return 0, "", 0, errors.New("длина слайса не равна трем")
 	}
 
-	// Количество шагов
 	numberOfSteps, err := strconv.Atoi(str[0])
 
 	if err != nil {
@@ -35,10 +33,9 @@ func parseTraining(data string) (int, string, time.Duration, error) {
 	}
 
 	if numberOfSteps <= 0 {
-		return 0, "", 0, errors.New("количество шагов меньше или равно 0")
+		return 0, "", 0, errors.New("количество шагов меньше или равно нулю")
 	}
 
-	//Продолжительность активности
 	durationOfTheActivity, err := time.ParseDuration(str[2])
 
 	if err != nil {
@@ -46,18 +43,18 @@ func parseTraining(data string) (int, string, time.Duration, error) {
 	}
 
 	if durationOfTheActivity <= 0 {
-		return 0, "", 0, errors.New("время равно или меньше 0")
+		return 0, "", 0, errors.New("продолжительность равно или меньше нуля")
 	}
 
 	return numberOfSteps, str[1], durationOfTheActivity, nil
 }
 
 func distance(steps int, height float64) float64 {
-	// Длинна шага
+
 	stepLength := height * stepLengthCoefficient
-	// Проиденное растояние в метрах
+
 	distanceTraveledInMeters := stepLength * float64(steps)
-	// Проиденное растояние в километрах
+
 	distanceTraveledInKilometers := distanceTraveledInMeters / mInKm
 
 	return distanceTraveledInKilometers
@@ -67,18 +64,26 @@ func distance(steps int, height float64) float64 {
 func meanSpeed(steps int, height float64, duration time.Duration) float64 {
 
 	if duration <= 0 {
+		err := errors.New("продолжительность меньше или равна нулю")
+		log.Println(err)
 		return 0
 	}
-	// Вычисление дистанций
+
+	if height <= 0 {
+		err := errors.New("рост меньше или равен нулю")
+		log.Println(err)
+		return 0
+	}
+
 	distanceTravelForSpeed := distance(steps, height)
-	// Вычисление средней скорости
+
 	averageSpeed := distanceTravelForSpeed / float64(duration.Hours())
 
 	return averageSpeed
 }
 
 func TrainingInfo(data string, weight, height float64) (string, error) {
-	//
+
 	numberOfSteps, typeOfTraining, durationOfTheActivity, err := parseTraining(data)
 
 	if err != nil {
@@ -122,20 +127,19 @@ func TrainingInfo(data string, weight, height float64) (string, error) {
 			typeOfTraining, float64(durationOfTheActivity.Hours()), distance, averageSpeed, WalkingSpentCalories), nil
 
 	default:
-		err = errors.New("неизвестный тип тренировки")
-		return "", err
+		return "", errors.New("неизвестный тип тренировки")
 	}
 
 }
 
 func RunningSpentCalories(steps int, weight, height float64, duration time.Duration) (float64, error) {
-	// Проверка входных данных
+
 	if steps <= 0 {
-		return 0, errors.New("количество шагов меньше или равно 0")
+		return 0, errors.New("количество шагов меньше или равно нулю")
 	}
 
 	if duration <= 0 {
-		return 0, errors.New("продолжительность меньше или равна 0")
+		return 0, errors.New("продолжительность меньше или равна нулю")
 	}
 
 	if weight <= 0 {
@@ -146,11 +150,10 @@ func RunningSpentCalories(steps int, weight, height float64, duration time.Durat
 		return 0, errors.New("отрицательный или нулевой рост")
 	}
 
-	// Средняя скорость
 	averageSpeed := meanSpeed(steps, height, duration)
-	// Продолжительность в минуах
+
 	durationInMinutes := float64(duration.Minutes())
-	// Количество калорий
+
 	numberOfCalories := (weight * averageSpeed * durationInMinutes) / minInH
 
 	return numberOfCalories, nil
@@ -158,13 +161,13 @@ func RunningSpentCalories(steps int, weight, height float64, duration time.Durat
 }
 
 func WalkingSpentCalories(steps int, weight, height float64, duration time.Duration) (float64, error) {
-	// Проверка входных данных
+
 	if steps <= 0 {
-		return 0, errors.New("количество шагов меньше или равно 0")
+		return 0, errors.New("количество шагов меньше или равно нулю")
 	}
 
 	if duration <= 0 {
-		return 0, errors.New("продолжительность меньше или равна 0")
+		return 0, errors.New("продолжительность меньше или равна нулю")
 	}
 
 	if weight <= 0 {
@@ -175,11 +178,10 @@ func WalkingSpentCalories(steps int, weight, height float64, duration time.Durat
 		return 0, errors.New("отрицательный или нулевой рост")
 	}
 
-	// Средняя скорость
 	averageSpeed := meanSpeed(steps, height, duration)
-	// Продолжительность в минуах
+
 	durationInMinutes := float64(duration.Minutes())
-	// Количество калорий
+
 	numberOfCalories := (weight * averageSpeed * durationInMinutes) / minInH
 
 	numberOfCaloriesIsSpecified := numberOfCalories * walkingCaloriesCoefficient
